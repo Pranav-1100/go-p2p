@@ -2,7 +2,7 @@ name: Go P2P DevSecOps CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 env:
