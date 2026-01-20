@@ -1,0 +1,45 @@
+name: CD - Deploy to K8s & DAST
+
+on:
+  workflow_run:
+    workflows: ["Go P2P DevSecOps CI"]
+    types:
+      - completed
+
+jobs:
+  deploy-and-test:
+    # Only run if CI was successful
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Create Kind Cluster
+        uses: helm/kind-action@v1.9.0
+
+      - name: Update Deployment Image
+        run: |
+          sed -i "s|pranav1100|${{ secrets.DOCKERHUB_USERNAME }}|g" k8s/deployment.yaml
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+          
+          echo "Waiting for pod to be ready..."
+          kubectl wait --for=condition=available --timeout=120s deployment/p2p-deployment
+
+      - name: Port Forward
+        run: |
+          kubectl port-forward svc/p2p-service 8081:8081 &
+          sleep 10
+
+      - name: Run OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'http://localhost:8081/health'
+          fail_action: false 
+      - name: Cleanup
+        if: always()
+        run: kind delete cluster

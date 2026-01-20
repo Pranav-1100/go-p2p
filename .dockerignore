@@ -1,0 +1,28 @@
+# Ignore Git files
+.git
+.gitignore
+
+# Ignore IDE files
+.vscode
+.idea
+*.swp
+
+# Ignore test files (not needed in Docker image)
+*_test.go
+coverage.out
+
+# Ignore documentation
+README.md
+*.md
+
+# Ignore CI/CD files
+.github
+
+# Ignore K8s manifests
+k8s
+
+# Ignore binary
+go-p2p
+
+# Ignore OS files
+.DS_Store

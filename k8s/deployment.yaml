@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: p2p-deployment
+  labels:
+    app: p2p-chat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: p2p-chat
+  template:
+    metadata:
+      labels:
+        app: p2p-chat
+    spec:
+      containers:
+      - name: p2p-container
+        image: pranav1100/go-p2p:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8081
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8081
+          initialDelaySeconds: 10
+          periodSeconds: 10
