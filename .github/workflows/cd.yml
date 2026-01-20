@@ -11,6 +11,11 @@ jobs:
     # Only run if CI was successful
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      checks: write
+      pull-requests: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
