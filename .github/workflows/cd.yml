@@ -32,7 +32,7 @@ jobs:
 
       - name: Port Forward
         run: |
-          kubectl port-forward svc/p2p-service 8081:8081 &
+          kubectl port-forward svc/p2p-service 8081:80 &
           sleep 10
 
       - name: Run OWASP ZAP Baseline Scan
